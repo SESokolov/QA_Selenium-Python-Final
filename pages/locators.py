@@ -17,3 +17,7 @@ class ProductPageLocators():
     PRODUCT_NAME_BASKET = (By.CSS_SELECTOR, ".alertinner>strong")
     PRODUCT_PRICE_BASKET = (By.CSS_SELECTOR, ".alertinner>p>strong")
     SUCCESS_MESSAGE = (By.CSS_SELECTOR, "#messages>.alert")
+
+class BasePageLocators():
+    LOGIN_LINK = (By.CSS_SELECTOR, "#login_link")
+    LOGIN_LINK_INVALID = (By.CSS_SELECTOR, "#login_link_inc")
