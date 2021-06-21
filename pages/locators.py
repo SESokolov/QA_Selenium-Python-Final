@@ -16,3 +16,4 @@ class ProductPageLocators():
     BASKET_LINK = (By.CSS_SELECTOR, ".btn-group>a")
     PRODUCT_NAME_BASKET = (By.CSS_SELECTOR, ".alertinner>strong")
     PRODUCT_PRICE_BASKET = (By.CSS_SELECTOR, ".alertinner>p>strong")
+    SUCCESS_MESSAGE = (By.CSS_SELECTOR, "#messages>.alert")
