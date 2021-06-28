@@ -4,10 +4,12 @@ from pages.product_page import ProductPage
 from pages.basket_page import BasketPage
 from pages.login_page import LoginPage
 
+PRODUCT_PAGE_LINK = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
+
 class TestUserAddToBasketFromProductPage():
     @pytest.fixture(scope="function", autouse=True)
     def setup(self, browser):
-        link = "http://selenium1py.pythonanywhere.com/accounts/login/"
+        link = PRODUCT_PAGE_LINK
         self.page = LoginPage(browser, link)
         self.page.open()
         self.page.go_to_login_page()
@@ -16,35 +18,35 @@ class TestUserAddToBasketFromProductPage():
         self.page.should_be_authorized_user()
 
     def test_user_cant_see_success_message(self, browser):
-        link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
+        link = PRODUCT_PAGE_LINK
         self.page = ProductPage(browser, link)   # инициализируем Page Object, передаем в конструктор экземпляр драйвера и url адрес 
         self.page.open()                      # открываем страницу
         self.should_not_be_success_message_item_added_text()
 
     @pytest.mark.need_review
     def test_user_can_add_product_to_basket(self, browser):
-        link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
+        link = PRODUCT_PAGE_LINK
         self.page = ProductPage(browser, link)   # инициализируем Page Object, передаем в конструктор экземпляр драйвера и url адрес 
         self.page.open()                      # открываем страницу
         self.page.add_product_to_basket()          # выполняем метод страницы — добавляем товар в корзину
 
 
 def test_guest_cant_see_success_message(browser):
-    link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
+    link = PRODUCT_PAGE_LINK
     page = ProductPage(browser, link)   # инициализируем Page Object, передаем в конструктор экземпляр драйвера и url адрес 
     page.open()                      # открываем страницу
     page.is_not_element_present(*ProductPageLocators.SUCCESS_MESSAGE)
 
 @pytest.mark.need_review
 def test_guest_can_add_product_to_basket(browser):
-    link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
+    link = PRODUCT_PAGE_LINK
     page = ProductPage(browser, link)   # инициализируем Page Object, передаем в конструктор экземпляр драйвера и url адрес 
     page.open()                      # открываем страницу
     page.add_product_to_basket()          # выполняем метод страницы — добавляем товар в корзину
 
 @pytest.mark.xfail(reason="Success message afret adding product to basket is presented")
 def test_guest_cant_see_success_message_after_adding_product_to_basket(browser):
-    link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
+    link = PRODUCT_PAGE_LINK
     page = ProductPage(browser, link)   # инициализируем Page Object, передаем в конструктор экземпляр драйвера и url адрес 
     page.open()                      # открываем страницу
     page.add_product_to_basket_without_code()          # выполняем метод страницы — добавляем товар в корзину
@@ -52,7 +54,7 @@ def test_guest_cant_see_success_message_after_adding_product_to_basket(browser):
 
 @pytest.mark.xfail(reason="Success message is presented")
 def test_message_disappeared_after_adding_product_to_basket(browser):
-    link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
+    link = PRODUCT_PAGE_LINK
     page = ProductPage(browser, link)   # инициализируем Page Object, передаем в конструктор экземпляр драйвера и url адрес 
     page.open()                      # открываем страницу
     page.add_product_to_basket_without_code()          # выполняем метод страницы — добавляем товар в корзину
@@ -74,7 +76,7 @@ def test_guest_can_go_to_login_page_from_product_page(browser):
 
 @pytest.mark.need_review
 def test_guest_cant_see_product_in_basket_opened_from_product_page(browser):
-    link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
+    link = PRODUCT_PAGE_LINK
     page = BasketPage(browser, link)
     page.open()
     page.go_to_basket_page()         # выполняем метод страницы — переходим на страницу корзины
