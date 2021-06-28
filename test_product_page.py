@@ -1,8 +1,50 @@
 ﻿import pytest
+import faker # фейковые данные для регистрации
 from pages.product_page import ProductPage
 from pages.basket_page import BasketPage
+from pages.login_page import LoginPage
 from pages.locators import ProductPageLocators
 from pages.locators import BasketPageLocators
+from pages.locators import LoginPageLocators
+
+class TestUserAddToBasketFromProductPage():
+    @pytest.fixture(scope="function", autouse=True)
+    def setup(self, browser):
+        link = "http://selenium1py.pythonanywhere.com/accounts/login/"
+        self.page = LoginPage(browser, link)
+        self.page.open()
+        self.page.go_to_login_page()
+        f = faker.Faker()
+        self.page.register_new_user(f.email(), f.password())
+        self.page.should_be_authorized_user()
+
+    def test_user_cant_see_success_message(self, browser):
+        link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
+        self.page = ProductPage(browser, link)   # инициализируем Page Object, передаем в конструктор экземпляр драйвера и url адрес 
+        self.page.open()                      # открываем страницу
+        assert self.page.is_not_element_present(*ProductPageLocators.SUCCESS_MESSAGE), "Success message is presented, but should not be"
+
+    @pytest.mark.parametrize('link', ["http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer0",
+                                      "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer1",
+                                      "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer2",
+                                      "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer3",
+                                      "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer4",
+                                      "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer5",
+                                      "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer6",
+                                      pytest.param("http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer7", marks=pytest.mark.xfail),
+                                      "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer8",
+                                      "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer9"])
+    def test_user_can_add_product_to_basket(self, browser, link):
+        self.page = ProductPage(browser, link)   # инициализируем Page Object, передаем в конструктор экземпляр драйвера и url адрес 
+        self.page.open()                      # открываем страницу
+        self.page.add_product_to_basket()          # выполняем метод страницы — добавляем товар в корзину
+
+
+def test_guest_cant_see_success_message(browser):
+    link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
+    page = ProductPage(browser, link)   # инициализируем Page Object, передаем в конструктор экземпляр драйвера и url адрес 
+    page.open()                      # открываем страницу
+    assert page.is_not_element_present(*ProductPageLocators.SUCCESS_MESSAGE), "Success message is presented, but should not be"
 
 @pytest.mark.parametrize('link', ["http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer0",
                                   "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer1",
@@ -26,12 +68,6 @@ def test_guest_cant_see_success_message_after_adding_product_to_basket(browser):
     page.open()                      # открываем страницу
     page.add_product_to_basket_without_code()          # выполняем метод страницы — добавляем товар в корзину
     assert page.is_not_element_present(*ProductPageLocators.SUCCESS_MESSAGE), "Success message afret adding product to basket is presented, but should not be"
-
-def test_guest_cant_see_success_message(browser):
-    link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
-    page = ProductPage(browser, link)   # инициализируем Page Object, передаем в конструктор экземпляр драйвера и url адрес 
-    page.open()                      # открываем страницу
-    assert page.is_not_element_present(*ProductPageLocators.SUCCESS_MESSAGE), "Success message is presented, but should not be"
 
 @pytest.mark.xfail(reason="Success message is presented")
 def test_message_disappeared_after_adding_product_to_basket(browser):
