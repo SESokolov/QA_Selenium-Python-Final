@@ -2,7 +2,6 @@
 from .locators import BasketPageLocators
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as ec
-from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 
 class BasketPage(BasePage):
@@ -10,18 +9,9 @@ class BasketPage(BasePage):
         link = self.browser.find_element(*BasketPageLocators.BASKET_LINK)
         link.click()
 
-    def is_element_present(self, how, what):
-        try:
-            self.browser.find_element(how, what)
-        except (NoSuchElementException):
-            return False
-        return True
+    def should_be_message_basket_is_empty(self):
+        assert self.is_not_element_present(*BasketPageLocators.BASKET_NOT_EMPTY), "Not found text 'Basket is empty'"
 
     #проверяет, что элемент не появляется на странице в течение заданного времени (упадет, как только увидит искомый элемент)
-    def is_not_element_present(self, how, what, timeout=4):
-        try:
-            WebDriverWait(self.browser, timeout).until(ec.presence_of_element_located((how, what)))
-        except TimeoutException:
-            return True
-    
-        return False
+    def should_not_be_items_in_basket(self):
+        assert self.is_element_present(*BasketPageLocators.BASKET_IS_EMPTY), "Basket is not empty"
